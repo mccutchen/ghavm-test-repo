@@ -1,7 +1,6 @@
 #!/bin/bash
 
 # Generate test git history with semver tags
-
 set -e
 
 update_readme() {

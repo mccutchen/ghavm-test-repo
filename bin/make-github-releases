@@ -1,0 +1,49 @@
+#!/bin/bash
+
+# Generate GitHub releases for all semver-compatible tags in the repository
+# Requires: gh CLI tool to be installed and authenticated
+
+set -e
+
+is_semver_tag() {
+    local tag=$1
+    if [[ $tag =~ ^v([0-9]+)(\.([0-9]+)\.([0-9]+)(-[A-Za-z0-9]+)?)?$ ]]; then
+        return 0
+    else
+        return 1
+    fi
+}
+
+generate_release_notes() {
+    local tag=$1
+    echo "## Release $tag"
+}
+
+create_release() {
+    local tag=$1
+    local release_notes=$(generate_release_notes "$tag")
+    if gh release create "$tag" --title "Release $tag" --notes "$release_notes"; then
+        echo "✓ created release for $tag"
+    else
+        echo "✗ failed to create release for $tag"
+        return 1
+    fi
+}
+
+main() {
+    echo "Finding all semver-compatible tags..."
+    local all_tags=$(git tag --list | grep -E '^v([0-9]+)(\.([0-9]+)\.([0-9]+)(-[A-Za-z0-9]+)?)?$' | sort -V)
+    local tag_count="$(echo "$all_tags" | wc -l | tr -d '[:space:]')"
+
+    echo "Found $tag_count semver tags:"
+    echo "$all_tags"
+    echo ""
+
+    echo "Creating $tag_count GitHub releases ..."
+    for tag in $all_tags; do
+        create_release "$tag"
+        sleep 0.25
+    done
+}
+
+main
