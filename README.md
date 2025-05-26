@@ -5,7 +5,7 @@ the behavior of [the GitHub Actions Version Manager (`ghavm`)][ghavm] project.
 
 ---
 
-Current release: v4.2.3
+Current release: develop
 
 [ghavm]: https://github.com/mccutchen/ghavm
 [releases]: https://github.com/mccutchen/ghavm-test-repo/releases
